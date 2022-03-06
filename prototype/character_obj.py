@@ -1,4 +1,3 @@
-from tracemalloc import start
 import pygame, sys, os, random
 
 class Player(pygame.sprite.Sprite):
@@ -7,7 +6,7 @@ class Player(pygame.sprite.Sprite):
 		self.respawn_animation = False
 		self.sprites = []
 
-		for _ in range(2):
+		for _ in range(4):
 			self.sprites.append(pygame.transform.scale(pygame.image.load(os.path.join('assets', 'player.png')), (50,50)))
 			self.sprites.append(pygame.transform.scale(pygame.image.load(os.path.join('assets', 'respawn_player.png')), (50,50)))
 
@@ -21,15 +20,21 @@ class Player(pygame.sprite.Sprite):
 		self.G = G
 		self.screen_height = screen_height
 
-	def respawn(self):
+	def respawn(self, sound_channel, collision_sound):
 		self.respawn_animation = True
+		sound_channel.play(collision_sound)
+
+		self.rect.x -= 110
+
+		return 30
 
 	def move(self):
+		#Getting the Keys Pressed
 		keys_pressed = pygame.key.get_pressed()
-		if keys_pressed[pygame.K_SPACE] and self.rect.y > 0:
+		if keys_pressed[pygame.K_SPACE] and self.rect.y > 0: #Checking if space bar is pressed and adding contraints
 			self.is_move = True
 
-	def update(self, speed):
+	def update(self, speed=0.0205):
 		#Simulating Gravity
 		if self.rect.y < self.screen_height - self.rect.height: #Constraints
 			self.rect.y += self.G
@@ -47,20 +52,21 @@ class Player(pygame.sprite.Sprite):
 				self.respawn_animation = False
 
 		self.image = self.sprites[int(self.current_sprite)]
+
 # General setup
 pygame.init()
 pygame.mixer.init()
 clock = pygame.time.Clock()
 
 # Game Screen
-screen_width = 400
-screen_height = 400
+screen_width = 900
+screen_height = 600
 screen = pygame.display.set_mode((screen_width,screen_height))
-pygame.display.set_caption("Sprite Animation")
+pygame.display.set_caption("Character Obj - Effects")
 
 # Creating the sprites and groups
 moving_sprites = pygame.sprite.Group()
-player = Player(*(200, 200), 3, screen_height)
+player = Player(*(450, 450), 3, screen_height)
 moving_sprites.add(player)
 
 obj = pygame.Rect(screen_width, 0, 80, screen_height)
@@ -75,7 +81,7 @@ while True:
 	clock.tick(120)
 	for event in pygame.event.get():
 		if event.type == respawn_player:
-			player.respawn()
+			screen_shake = player.respawn(sound_effects, COLLISION_SOUND)
 		if event.type == pygame.QUIT:
 			pygame.quit()
 			sys.exit()
@@ -87,16 +93,12 @@ while True:
 	player.move()
 
 	moving_sprites.draw(screen)
-	moving_sprites.update(0.0275)
+	moving_sprites.update()
 
 	if pygame.Rect.colliderect(player.rect, obj):
-		pygame.event.post(pygame.event.Event(respawn_player))
+		if g==0:
+			pygame.event.post(pygame.event.Event(respawn_player))
 		g+=1
-
-		if g == 1:
-			sound_effects.play(COLLISION_SOUND)
-			screen_shake = 20
-			player.rect.x -= player.G*22
 	elif g>1:
 		g=0
 
@@ -114,13 +116,13 @@ while True:
 
 	offset = [0,0]
 	if screen_shake:
-		offset[0] = random.randint(0, 9) - 4
-		offset[1] = random.randint(0, 9) - 4
+		offset[0] = random.randint(0, 8) - 4
+		offset[1] = random.randint(0, 8) - 4
 
 	screen.blit(screen, offset)
 
 	#Getting it back to its original x value
-	if player.rect.x <= 200 and g==0:
-		player.rect.x += 1
+	if player.rect.x <= 450 and g==0:
+		player.rect.x += 2
 
 	pygame.display.flip()
