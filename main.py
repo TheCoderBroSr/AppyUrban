@@ -46,7 +46,8 @@ LOSE_SOUND = pygame.mixer.Sound(resource_path('sounds/lose.wav'))
 GAME_MUSIC = pygame.mixer.Sound(resource_path('sounds/music.mp3'))
 def create_obstacle(player):
     obstacle = pygame.Rect(WIDTH, 0, 80, HEIGHT)
-    obstacle_space = pygame.Rect(obstacle.x, random.randint(HEIGHT/3, HEIGHT - (HEIGHT/3)), obstacle.width, player.height*6)
+    random_height = random.randint(int((5/9) * HEIGHT), int((7/9) * HEIGHT))
+    obstacle_space = pygame.Rect(obstacle.x, random_height, obstacle.width, player.height*7.5)
     obstacle_space.y -= obstacle_space.height
     return (obstacle, obstacle_space)
 
