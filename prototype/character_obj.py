@@ -34,7 +34,7 @@ class Player(pygame.sprite.Sprite):
 		if keys_pressed[pygame.K_SPACE] and self.rect.y > 0: #Checking if space bar is pressed and adding contraints
 			self.is_move = True
 
-	def update(self, speed=0.0205):
+	def update(self, speed=0.0275):
 		#Simulating Gravity
 		if self.rect.y < self.screen_height - self.rect.height: #Constraints
 			self.rect.y += self.G
@@ -66,7 +66,9 @@ pygame.display.set_caption("Character Obj - Effects")
 
 # Creating the sprites and groups
 moving_sprites = pygame.sprite.Group()
-player = Player(*(450, 450), 3, screen_height)
+G=3
+FPS = 120
+player = Player(*(450, 450), G, screen_height)
 moving_sprites.add(player)
 
 obj = pygame.Rect(screen_width, 0, 80, screen_height)
@@ -78,7 +80,7 @@ sound_effects = pygame.mixer.Channel(0)
 
 respawn_player = pygame.USEREVENT + 1
 while True:
-	clock.tick(120)
+	clock.tick(FPS)
 	for event in pygame.event.get():
 		if event.type == respawn_player:
 			screen_shake = player.respawn(sound_effects, COLLISION_SOUND)
@@ -99,6 +101,7 @@ while True:
 		if g==0:
 			pygame.event.post(pygame.event.Event(respawn_player))
 		g+=1
+		FPS = 60 #Slowing down
 	elif g>1:
 		g=0
 
@@ -107,9 +110,9 @@ while True:
 		obj.y = 0
 
 	if g==0:
-		obj.x -= 2
-	else:
-		obj.x -= 0.001
+		FPS = 120
+
+	obj.x -= 2
 
 	if screen_shake>0:
 		screen_shake -= 1
