@@ -1,7 +1,7 @@
 import pygame, sys, os, random
 
 class Player(pygame.sprite.Sprite):
-	def __init__(self, pos_x, pos_y, G, screen_height):
+	def __init__(self, position, screen, G):
 		super().__init__()
 		self.respawn_animation = False
 		self.sprites = []
@@ -14,11 +14,11 @@ class Player(pygame.sprite.Sprite):
 		self.image = self.sprites[self.current_sprite]
 
 		self.rect = self.image.get_rect()
-		self.rect.topleft = [pos_x, pos_y]
+		self.rect.topleft = position
 		self.is_move = False
 
 		self.G = G
-		self.screen_height = screen_height
+		self.screen_height = screen[1]
 
 	def respawn(self, sound_channel, collision_sound):
 		self.respawn_animation = True
@@ -68,7 +68,7 @@ pygame.display.set_caption("Character Obj - Effects")
 moving_sprites = pygame.sprite.Group()
 G=3
 FPS = 120
-player = Player(*(450, 450), G, screen_height)
+player = Player((450, 450), (screen_width, screen_height), G)
 moving_sprites.add(player)
 
 obj = pygame.Rect(screen_width, 0, 80, screen_height)
