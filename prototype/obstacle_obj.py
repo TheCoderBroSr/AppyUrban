@@ -37,6 +37,10 @@ class Obstacle(pygame.sprite.Sprite):
         pygame.draw.rect(self.screen, self.border_color, self.top_border)
         pygame.draw.rect(self.screen, self.border_color, self.bottom_border)
 
+        #Deleting Obstacle, when not on screen
+        if self.rect.x <= -self.width:
+            self.kill()
+
 # General setup
 pygame.init()
 pygame.mixer.init()
@@ -77,10 +81,7 @@ while True:
     if last_obstacle.rect.x <= (screen_width - obstacle_seperation): #Check the last obstacles position
         moving_sprites.add(Obstacle((screen_width, 0), screen, 80, BG, BLUE, G)) #Add new obstacle 
     
-    #Getting rid of obstacles not on screen
-    first_obstacle = moving_sprites.sprites()[0]
-    if first_obstacle.rect.x <= -first_obstacle.width:
-        first_obstacle.kill()
+    #Obstacle is deleted when it is not the screen, and this is done in the update function itself
 
     print(moving_sprites)
 
