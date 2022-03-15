@@ -17,9 +17,10 @@ G=3
 FPS = 120
 BG = (230, 152, 131)
 player = Player((screen_width//2, screen_height//2), screen, G)
-sample_collision_obj = pygame.Rect(screen_width, 100, 200, 200) #Spawing obstacle right
-# sample_collision_obj = pygame.Rect(0, 100, 200, 200) #Spawing obstacle left 
-obj_color = (0,0,0)
+sample_collision_obj1 = pygame.Rect(screen_width, 100, 150, 150) #Spawing obstacle right
+sample_collision_obj2 = pygame.Rect(0, 300, 150, 150) #Spawing obstacle left 
+obj_color1 = (20,60,30)
+obj_color2 = (20,50,60)
 
 moving_sprites = pygame.sprite.Group()
 moving_sprites.add(player)
@@ -33,7 +34,8 @@ while True:
     screen.fill(BG)
 
     #Drawing a sample collision obj
-    pygame.draw.rect(screen, obj_color, sample_collision_obj)
+    pygame.draw.rect(screen, obj_color1, sample_collision_obj1)
+    pygame.draw.rect(screen, obj_color2, sample_collision_obj2)
 
     #Giving player ability to move
     player.move()
@@ -42,23 +44,29 @@ while True:
     moving_sprites.update()
 
     #Moving the sample collsion obj left
-    sample_collision_obj.x -= G
+    sample_collision_obj1.x -= G
 
     #Moving the sample collsion obj right
-    # sample_collision_obj.x += G
+    sample_collision_obj2.x += G
 
     #Teleporting obstacle left to right
-    if sample_collision_obj.x <= -sample_collision_obj.width: 
-        sample_collision_obj.x = screen_width
+    if sample_collision_obj1.x <= -sample_collision_obj1.width: 
+        sample_collision_obj1.x = screen_width
 
     #Teleporting obstacle from right to left
-    # if sample_collision_obj.x >= screen_width + sample_collision_obj.width: 
-    #     sample_collision_obj.x = 0
+    if sample_collision_obj2.x >= screen_width + sample_collision_obj2.width: 
+        sample_collision_obj2.x = 0
 
     #Checking for collision
-    x_collide, y_collide = player.collision_det(sample_collision_obj)
-    if x_collide and y_collide:
-        obj_color = (255,0,0)
+    x1_collide, y1_collide = player.collision_det(sample_collision_obj1)
+    if x1_collide and y1_collide:
+        obj_color1 = (255,0,0)
     else:
-        obj_color = (0,0,0)
+        obj_color1 = (20,60,30)
+
+    x2_collide, y2_collide = player.collision_det(sample_collision_obj2)
+    if x2_collide and y2_collide:
+        obj_color2 = (255,0,0)
+    else:
+        obj_color2 = (20,50,60)
     pygame.display.update()
