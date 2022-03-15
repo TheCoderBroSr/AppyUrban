@@ -39,7 +39,7 @@ class Player(pygame.sprite.Sprite):
 			self.is_move = True
 
 	def collision_det(self, obj):
-		return False
+		return pygame.Rect.colliderect(self.rect, obj)
 
 	def update(self, speed=0.0275):
 		#Movement
