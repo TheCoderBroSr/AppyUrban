@@ -109,7 +109,7 @@ def intro(STAY, WIN, player, player_looks, clock, last_game_score, highscore, de
         clock.tick(FPS)
         WIN.fill(BG)
 
-        title = SCORE_FONT.render("Flappy Bird - My Way", 1, BLUE)
+        title = SCORE_FONT.render("Appy Urban", 1, BLUE)
         WIN.blit(title, (((WIDTH - title.get_width())//2), 50))
 
         last_score = MENU_SCORE_FONT.render(f"Last Game Score: {last_game_score}", 1, RED)
@@ -137,7 +137,7 @@ def intro(STAY, WIN, player, player_looks, clock, last_game_score, highscore, de
                 sys.exit()
 
 def main(WIN, player_looks, respawn_player_looks, obstacle_looks, cloud_looks, live_heart_looks, death_heart_looks, STAY, delay):
-    pygame.display.set_caption("Flappy Bird - MY WAY")
+    pygame.display.set_caption("Appy Urban")
     clock = pygame.time.Clock()
 
     player = pygame.Rect(WIDTH//2, HEIGHT//2, 50 - 20, 50 - 20)

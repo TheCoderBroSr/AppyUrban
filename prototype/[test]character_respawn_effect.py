@@ -16,7 +16,7 @@ pygame.display.set_caption("Character Obj - Respawn Effect")
 moving_sprites = pygame.sprite.Group()
 G=3
 FPS = 120
-player = Player((450, 450), (screen_width, screen_height), G)
+player = Player((450, 450), screen, G)
 moving_sprites.add(player)
 
 obj = pygame.Rect(screen_width, 0, 80, screen_height)
