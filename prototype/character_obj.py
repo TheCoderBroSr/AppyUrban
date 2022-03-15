@@ -42,7 +42,7 @@ class Player(pygame.sprite.Sprite):
 		horizontal_collision = (self.rect.x in range(obj.x, obj.x + obj.width)) or (self.rect.x + self.rect.width in range(obj.x, obj.x + obj.width))
 		vertical_collision = (self.rect.y in range(obj.y, obj.y + obj.height)) or (self.rect.y + self.rect.height in range(obj.y, obj.y + obj.height))
 
-		return horizontal_collision and vertical_collision
+		return (horizontal_collision, vertical_collision)
 
 	def update(self, speed=0.0275):
 		#Movement

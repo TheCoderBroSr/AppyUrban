@@ -51,7 +51,8 @@ while True:
         sample_collision_obj.x = 0
 
     #Checking for collision
-    if player.collision_det(sample_collision_obj):
+    x_collide, y_collide = player.collision_det(sample_collision_obj)
+    if x_collide and y_collide:
         obj_color = (255,0,0)
     else:
         obj_color = (0,0,0)
