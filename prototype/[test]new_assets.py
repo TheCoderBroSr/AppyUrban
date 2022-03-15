@@ -38,7 +38,7 @@ while True:
 
     WIN.blit(cloud, (WIDTH-100-250, 100))
 
-    WIN.blit(settings_icon_light, (500,500))
-    WIN.blit(settings_icon_dark, (560,500))
+    WIN.blit(settings_icon_light, (10,10))
+    WIN.blit(settings_icon_dark, (10,70))
 
     pygame.display.update()
