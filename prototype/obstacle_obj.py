@@ -43,49 +43,7 @@ def obstacle_generation(obstacles, obstacle_seperation, screen):
     first_obstacle = obstacles[0]
     last_obstacle = obstacles[-1]
     if last_obstacle.rect.x <= (screen.get_width() - obstacle_seperation): #Check the last obstacles position
-        moving_sprites.add(first_obstacle.copy((screen_width, 0))) #Add new obstacle
+        obstacles.add(first_obstacle.copy((screen.get_width(), 0))) #Add new obstacle
 
     if first_obstacle.rect.x <= -first_obstacle.width: #Deleting Obstacle, when not on screen
         first_obstacle.kill()
-
-# General setup
-pygame.init()
-pygame.mixer.init()
-clock = pygame.time.Clock()
-
-# Game Screen
-screen_width = 900
-screen_height = 600
-screen = pygame.display.set_mode((screen_width,screen_height))
-pygame.display.set_caption("Obstacle Obj")
-
-# Creating the sprites and groups
-G=3
-FPS = 120
-BG = (230, 152, 131)
-BLUE = (5, 23, 61)
-
-obstacle = Obstacle((screen_width, 0), screen, 80, BG, BLUE, G)
-
-moving_sprites = pygame.sprite.Group()
-moving_sprites.add(obstacle)
-
-while True:
-    clock.tick(FPS)
-    for event in pygame.event.get():
-        if event.type == pygame.QUIT:
-            pygame.quit()
-            sys.exit()
-    # Drawing
-    screen.fill(BG)
-    moving_sprites.draw(screen)
-    moving_sprites.update()
-
-    # Procedural Generation
-    obstacle_generation(moving_sprites.sprites(), 300, screen)
-    print(moving_sprites)
-
-    #Player fill in
-    pygame.draw.rect(screen, (0,0,0), pygame.Rect(screen_width//2, screen_height//2, 50, 50))
-
-    pygame.display.update()

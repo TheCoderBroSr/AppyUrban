@@ -1,4 +1,4 @@
-import pygame
+import pygame, sys
 from character_obj import Player
 
 # General setup
@@ -16,11 +16,15 @@ pygame.display.set_caption("Character Obj - Collision")
 G=3
 FPS = 120
 BG = (230, 152, 131)
-player = Player((450, 450), (screen_width, screen_height), G)
+# player = Player((450, 450), (screen_width, screen_height), G)
 
 while True:
     clock.tick(FPS)
+    for event in pygame.event.get():
+        if event.type == pygame.QUIT:
+            pygame.quit()
+            sys.exit()
 
     screen.fill(BG)
 
-    pygame.diplay.update()
+    pygame.display.update()
