@@ -15,7 +15,7 @@ class Player(pygame.sprite.Sprite):
 
 		self.rect = self.image.get_rect()
 		self.rect.topleft = position
-		self.is_move = False
+		self.can_move = False
 
 		self.G = G
 		self.screen_height = screen.get_height()
@@ -36,7 +36,7 @@ class Player(pygame.sprite.Sprite):
 		#Getting the Keys Pressed
 		keys_pressed = pygame.key.get_pressed()
 		if keys_pressed[pygame.K_SPACE] and self.rect.y > 0: #Checking if space bar is pressed and adding contraints
-			self.is_move = True
+			self.can_move = True
 
 	def collision_det(self, obj):
 		horizontal_collision = (self.rect.x in range(obj.x, obj.x + obj.width)) or (self.rect.x + self.rect.width in range(obj.x, obj.x + obj.width))
@@ -46,9 +46,9 @@ class Player(pygame.sprite.Sprite):
 
 	def update(self, speed=0.0275):
 		#Movement
-		if self.is_move:
+		if self.can_move:
 			self.rect.y -= self.G*4
-			self.is_move = False
+			self.can_move = False
 
 		#Respawn Animation
 		if self.respawn_animation == True:
