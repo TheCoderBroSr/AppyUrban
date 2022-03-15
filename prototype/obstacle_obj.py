@@ -26,10 +26,12 @@ class Obstacle(pygame.sprite.Sprite):
         self.bottom_border = pygame.Rect(self.space.x, self.space.y + self.space.height, self.space.width, 10)
         self.border_color = border_color
 
+    def copy(self, position):
+        return Obstacle(position, self.screen, self.width, self.space_color, self.border_color, self.G)
+
     def update(self):
         # Moving the obstacles
-        self.bottom_border.x = self.top_border.x = self.rect.x
-        self.space.x = self.rect.x
+        self.bottom_border.x = self.top_border.x = self.space.x = self.rect.x
         self.rect.x -= G
 
         #Drawing space and borders
@@ -37,9 +39,14 @@ class Obstacle(pygame.sprite.Sprite):
         pygame.draw.rect(self.screen, self.border_color, self.top_border)
         pygame.draw.rect(self.screen, self.border_color, self.bottom_border)
 
-        #Deleting Obstacle, when not on screen
-        if self.rect.x <= -self.width:
-            self.kill()
+def obstacle_generation(obstacles, obstacle_seperation, screen):
+    first_obstacle = obstacles[0]
+    last_obstacle = obstacles[-1]
+    if last_obstacle.rect.x <= (screen.get_width() - obstacle_seperation): #Check the last obstacles position
+        moving_sprites.add(first_obstacle.copy((screen_width, 0))) #Add new obstacle
+
+    if first_obstacle.rect.x <= -first_obstacle.width: #Deleting Obstacle, when not on screen
+        first_obstacle.kill()
 
 # General setup
 pygame.init()
@@ -53,7 +60,7 @@ screen = pygame.display.set_mode((screen_width,screen_height))
 pygame.display.set_caption("Obstacle Obj")
 
 # Creating the sprites and groups
-G=2
+G=3
 FPS = 120
 BG = (230, 152, 131)
 BLUE = (5, 23, 61)
@@ -75,14 +82,10 @@ while True:
     moving_sprites.update()
 
     # Procedural Generation
-    #Creating new obstacles
-    obstacle_seperation = 300
-    last_obstacle = moving_sprites.sprites()[-1]
-    if last_obstacle.rect.x <= (screen_width - obstacle_seperation): #Check the last obstacles position
-        moving_sprites.add(Obstacle((screen_width, 0), screen, 80, BG, BLUE, G)) #Add new obstacle 
-    
-    #Obstacle is deleted when it is not the screen, and this is done in the update function itself
-
+    obstacle_generation(moving_sprites.sprites(), 300, screen)
     print(moving_sprites)
+
+    #Player fill in
+    pygame.draw.rect(screen, (0,0,0), pygame.Rect(screen_width//2, screen_height//2, 50, 50))
 
     pygame.display.update()
