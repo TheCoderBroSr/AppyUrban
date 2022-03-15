@@ -18,7 +18,7 @@ class Player(pygame.sprite.Sprite):
 		self.is_move = False
 
 		self.G = G
-		self.screen_height = screen[1]
+		self.screen_height = screen.get_height()
 
 	def respawn(self, sound_channel, collision_sound):
 		self.respawn_animation = True
@@ -29,16 +29,19 @@ class Player(pygame.sprite.Sprite):
 		return 30
 
 	def move(self):
+		#Simulating Gravity
+		if self.rect.y < self.screen_height - self.rect.height: #Constraints
+			self.rect.y += self.G
+
 		#Getting the Keys Pressed
 		keys_pressed = pygame.key.get_pressed()
 		if keys_pressed[pygame.K_SPACE] and self.rect.y > 0: #Checking if space bar is pressed and adding contraints
 			self.is_move = True
 
-	def update(self, speed=0.0275):
-		#Simulating Gravity
-		if self.rect.y < self.screen_height - self.rect.height: #Constraints
-			self.rect.y += self.G
+	def collision_det(self, obj):
+		return False
 
+	def update(self, speed=0.0275):
 		#Movement
 		if self.is_move:
 			self.rect.y -= self.G*4

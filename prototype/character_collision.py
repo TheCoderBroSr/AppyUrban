@@ -16,8 +16,11 @@ pygame.display.set_caption("Character Obj - Collision")
 G=3
 FPS = 120
 BG = (230, 152, 131)
-# player = Player((450, 450), (screen_width, screen_height), G)
+player = Player((screen_width//2, screen_height//2), screen, G)
+sample_collision_obj = pygame.Rect(screen_width, 100, 100, 130)
 
+moving_sprites = pygame.sprite.Group()
+moving_sprites.add(player)
 while True:
     clock.tick(FPS)
     for event in pygame.event.get():
@@ -26,5 +29,20 @@ while True:
             sys.exit()
 
     screen.fill(BG)
+
+    #Drawing a sample collision obj
+    pygame.draw.rect(screen, (0,0,0), sample_collision_obj)
+
+    #Giving player ability to move
+    player.move()
+
+    moving_sprites.draw(screen)
+    moving_sprites.update()
+
+    #Moving the sample collsion obj
+    sample_collision_obj.x -= G
+
+    if sample_collision_obj.x <= -sample_collision_obj.width:
+        sample_collision_obj.x = screen_width
 
     pygame.display.update()
