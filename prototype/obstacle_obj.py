@@ -32,7 +32,7 @@ class Obstacle(pygame.sprite.Sprite):
     def update(self):
         # Moving the obstacles
         self.bottom_border.x = self.top_border.x = self.space.x = self.rect.x
-        self.rect.x -= G
+        self.rect.x -= self.G
 
         #Drawing space and borders
         pygame.draw.rect(self.screen, self.space_color, self.space)
@@ -40,8 +40,8 @@ class Obstacle(pygame.sprite.Sprite):
         pygame.draw.rect(self.screen, self.border_color, self.bottom_border)
 
 def obstacle_generation(obstacles, obstacle_seperation, screen):
-    first_obstacle = obstacles[0]
-    last_obstacle = obstacles[-1]
+    first_obstacle = obstacles.sprites()[0]
+    last_obstacle = obstacles.sprites()[-1]
     if last_obstacle.rect.x <= (screen.get_width() - obstacle_seperation): #Check the last obstacles position
         obstacles.add(first_obstacle.copy((screen.get_width(), 0))) #Add new obstacle
 

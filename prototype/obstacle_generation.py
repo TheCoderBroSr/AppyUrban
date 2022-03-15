@@ -35,7 +35,7 @@ while True:
     moving_sprites.update()
 
     # Procedural Generation
-    obstacle_generation(moving_sprites.sprites(), 300, screen)
+    obstacle_generation(moving_sprites, 300, screen)
     print(moving_sprites)
 
     #Player fill in
