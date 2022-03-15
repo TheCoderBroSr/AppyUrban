@@ -17,7 +17,8 @@ G=3
 FPS = 120
 BG = (230, 152, 131)
 player = Player((screen_width//2, screen_height//2), screen, G)
-sample_collision_obj = pygame.Rect(screen_width, 100, 100, 130)
+# sample_collision_obj = pygame.Rect(screen_width, 100, 200, 200)
+sample_collision_obj = pygame.Rect(0, 100, 200, 200)
 obj_color = (0,0,0)
 
 moving_sprites = pygame.sprite.Group()
@@ -41,10 +42,13 @@ while True:
     moving_sprites.update()
 
     #Moving the sample collsion obj
-    sample_collision_obj.x -= G
+    # sample_collision_obj.x -= G
+    sample_collision_obj.x += G
 
-    if sample_collision_obj.x <= -sample_collision_obj.width:
-        sample_collision_obj.x = screen_width
+    # if sample_collision_obj.x <= -sample_collision_obj.width:
+    #     sample_collision_obj.x = screen_width
+    if sample_collision_obj.x >= screen_width + sample_collision_obj.width:
+        sample_collision_obj.x = 0
 
     #Checking for collision
     if player.collision_det(sample_collision_obj):
