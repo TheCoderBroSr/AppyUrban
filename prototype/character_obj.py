@@ -15,18 +15,15 @@ class Player(pygame.sprite.Sprite):
 
 		self.rect = self.image.get_rect()
 		self.rect.topleft = position
+		self.x, self.y = position
 		self.can_move = False
 
 		self.G = G
 		self.screen_height = screen.get_height()
 
-	def respawn(self, sound_channel, collision_sound):
+	# def respawn(self, sound_channel, collision_sound):
+	def respawn(self):
 		self.respawn_animation = True
-		sound_channel.play(collision_sound)
-
-		self.rect.x -= 110
-
-		return 30
 
 	def move(self):
 		#Simulating Gravity
@@ -38,13 +35,19 @@ class Player(pygame.sprite.Sprite):
 		if keys_pressed[pygame.K_SPACE] and self.rect.y > 0: #Checking if space bar is pressed and adding contraints
 			self.can_move = True
 
-	def collision_det(self, obj):
-		horizontal_collision = (self.rect.x in range(obj.x, obj.x + obj.width)) or (self.rect.x + self.rect.width in range(obj.x, obj.x + obj.width))
-		vertical_collision = (self.rect.y in range(obj.y, obj.y + obj.height)) or (self.rect.y + self.rect.height in range(obj.y, obj.y + obj.height))
+	def collision_det(self, obj, precision=0):
+		x_range = range(obj.x + precision, obj.x + obj.width - precision)
+		y_range = range(obj.y + precision, obj.y + obj.height - precision)
+		
+		horizontal_collision = (self.x in x_range) or (self.x + self.rect.width in x_range)
+		vertical_collision = (self.y in y_range) or (self.y + self.rect.height in y_range)
 
 		return (horizontal_collision, vertical_collision)
 
 	def update(self, speed=0.0275):
+		#Changing x, y values to be the same as the player's rect values
+		self.x, self.y = self.rect.x, self.rect.y
+
 		#Movement
 		if self.can_move:
 			self.rect.y -= self.G*4
