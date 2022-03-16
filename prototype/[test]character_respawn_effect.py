@@ -31,7 +31,8 @@ while True:
 	clock.tick(FPS)
 	for event in pygame.event.get():
 		if event.type == respawn_player:
-			screen_shake = player.respawn(sound_effects, COLLISION_SOUND)
+			player.respawn()
+
 		if event.type == pygame.QUIT:
 			pygame.quit()
 			sys.exit()
@@ -48,6 +49,9 @@ while True:
 	if pygame.Rect.colliderect(player.rect, obj):
 		if g==0:
 			pygame.event.post(pygame.event.Event(respawn_player))
+			screen_shake = 20
+			player.rect.x -= 80
+			sound_effects.play(COLLISION_SOUND)
 		g+=1
 		FPS = 60 #Slowing down
 	elif g>1:
