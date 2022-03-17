@@ -21,7 +21,6 @@ class Player(pygame.sprite.Sprite):
 		self.G = G
 		self.screen_height = screen.get_height()
 
-	# def respawn(self, sound_channel, collision_sound):
 	def respawn(self):
 		self.respawn_animation = True
 

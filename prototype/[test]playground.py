@@ -73,8 +73,8 @@ while True:
                 npz1, npz2 = obstacle.non_passable_zones()
 
                 #Checking if the player is colliding with these zones
-                x1_collide, y1_collide = player.collision_det(npz1, 30)
-                x2_collide, y2_collide = player.collision_det(npz2, 30)
+                x1_collide, y1_collide = player.collision_det(npz1, 20)
+                x2_collide, y2_collide = player.collision_det(npz2, 20)
 
                 if ((x1_collide and y1_collide) or (x2_collide and y2_collide)) and (not player.respawn_animation):
                     obstacle.can_collide = False
