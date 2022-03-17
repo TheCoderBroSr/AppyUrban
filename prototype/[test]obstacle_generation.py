@@ -18,7 +18,7 @@ FPS = 120
 BG = (230, 152, 131)
 BLUE = (5, 23, 61)
 
-obstacle = Obstacle((screen_width, 0), screen, 80, BG, BLUE, G)
+obstacle = Obstacle((screen_width, 0), screen, space_color = BG, border_color = BLUE)
 
 moving_sprites = pygame.sprite.Group()
 moving_sprites.add(obstacle)

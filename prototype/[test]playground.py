@@ -32,7 +32,7 @@ collision_sprites = pygame.sprite.Group()
 
 #Initializing player and obstacle objects
 player = Player((screen_width//2, screen_height//2), screen, G)
-obstacle = Obstacle((screen_width, 0), screen, 80, BG, BLUE, G)
+obstacle = Obstacle((screen_width, 0), screen, space_color = BG, border_color = BLUE)
 
 #Adding them to their respective sprite group
 moving_sprites.add(player)
