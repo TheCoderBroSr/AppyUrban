@@ -37,10 +37,15 @@ class Player(pygame.sprite.Sprite):
 	def collision_det(self, obj, precision=0):
 		x_range = range(obj.x + precision, obj.x + obj.width - precision)
 		y_range = range(obj.y + precision, obj.y + obj.height - precision)
+
+		#testing
+		# x_range_rect = pygame.Rect(obj.x + precision, obj.x + obj.width - precision, 10, 10)
+		# y_range_rect = pygame.Rect(obj.y + precision, obj.y + obj.width - precision, 10, 10)
 		
 		horizontal_collision = (self.x in x_range) or (self.x + self.rect.width in x_range)
 		vertical_collision = (self.y in y_range) or (self.y + self.rect.height in y_range)
 
+		# return (horizontal_collision, vertical_collision, x_range_rect, y_range_rect)
 		return (horizontal_collision, vertical_collision)
 
 	def update(self, speed=0.0275):
