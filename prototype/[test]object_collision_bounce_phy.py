@@ -45,8 +45,8 @@ while True:
 
     if collided:
         if Gx <= 0 and Gy >= 0:
-            Gx += 0.01
-            Gy -= 0.01
+            Gx += 0.02
+            Gy -= 0.0099
 
         if Gy < 0:
             Gy = 0
