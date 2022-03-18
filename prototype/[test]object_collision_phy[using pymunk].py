@@ -17,6 +17,17 @@ FPS = 120
 BG = (230, 152, 131)
 BLUE = (5, 23, 61)
 
+#Acceleration
+G=1
+Gx = 2*G
+Gy = G
+
+player_dummy = pygame.Rect(100, screen_height-100, 50, 50)
+obstacle = pygame.Rect(screen_width - 300, 0, 40, screen_height)
+
+#Pymunk Phy Important Vars
+space = pymunk.space()
+
 while True:
     clock.tick(FPS)
 
@@ -31,5 +42,13 @@ while True:
                 sys.exit()
     
     screen.fill(BG)
+
+    #Drawing the obstacle and player
+    pygame.draw.rect(screen, (0,0,0), obstacle)
+    pygame.draw.rect(screen, BLUE, player_dummy)
+
+    #Moving the player
+    player_dummy.x += Gx
+    player_dummy.y -= Gy
 
     pygame.display.update()

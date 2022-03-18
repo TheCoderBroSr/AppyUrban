@@ -25,10 +25,16 @@ START = False
 
 title = TITTLE_FONT.render("Press 'p' to start the simulation, and 'q' to stop", 1, BLUE)
 
-obstacle = pygame.Rect(screen_width - 300, 0, 60, screen_height)
+obstacle = pygame.Rect(screen_width//2, 0, 60, screen_height)
+obstacle.x -= obstacle.width//2
+
 player_dummy = pygame.Rect(100, screen_height - 150, 50, 50)
 
 collided = 0
+reset_counter = 0
+
+initial_player_x = player_dummy.x
+initial_player_y = player_dummy.y
 while True:
     clock.tick(FPS)
     for event in pygame.event.get():
@@ -58,34 +64,44 @@ while True:
 
         #Move the player
         #The accelerations are Gx & Gy
-        player_dummy.x += Gx
-        player_dummy.y -= Gy
+        if initial_player_x < screen_width//2:
+            player_dummy.x += Gx
+        else:
+            player_dummy.x -= Gx
+
+        if initial_player_y > screen_height//2:
+            player_dummy.y -= Gy
+        else:
+            player_dummy.y += Gy
 
         #Checking if dummy player has collided
-        if player_dummy.x + player_dummy.width >= obstacle.x:
+        if player_dummy.colliderect(obstacle):
             Gx *= -1
             collided = 1
 
-        if collided:
-            if Gx <= 0 and Gy >= 0:
-                Gx += 0.02
-                Gy -= 0.0099
+        if collided == 1:
+            reset_counter += 1
 
-            if Gy < 0:
-                Gy = 0
-
-            if Gx > 0:
-                Gx = 0
-
-        if Gx == 0 and Gy == 0:
-            pygame.time.delay(1000)
-            
+        if reset_counter == FPS:
             Gx = 2*G
             Gy = G
             collided = 0
             testcase_no += 1
 
-            player_dummy.x = random.randint(10, screen_width - 400)
-            player_dummy.y = random.randint(500, screen_height - 100)
+            player_dummy.x = random.randint(10, screen_width - 75)
+            player_dummy.y = random.randint(10, screen_height - 100)
+
+            #Checking for dead zones
+            while player_dummy.x in range(obstacle.x - player_dummy.width, obstacle.x + obstacle.width + player_dummy.width):
+                player_dummy.x = random.randint(10, screen_width - 75)
+
+            initial_player_x = player_dummy.x
+            initial_player_y = player_dummy.y
+
+            #Resetting the vars
+            collided = 0
+            reset_counter = 0
+
+            pygame.time.delay(1000)
 
     pygame.display.update()
