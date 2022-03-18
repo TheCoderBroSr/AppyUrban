@@ -50,8 +50,7 @@ while True:
             new_change += [player_latest_position[0] - player_2nd_latest_position[0]]
             new_change += [player_latest_position[1] - player_2nd_latest_position[1]]
 
-        player_dummy.x += new_change[0]
-        player_dummy.y -= new_change[1]
+        player_dummy.x -= new_change[0]
         print(new_change)
 
     pygame.display.update()
