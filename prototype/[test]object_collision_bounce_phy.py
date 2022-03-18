@@ -13,12 +13,15 @@ pygame.display.set_caption("Character Collision Bounce - Physics")
 
 # Some important vars
 FPS = 120
-G = 1
+G = 1 #Is the acceleration
+
+Gx = 2*G
+Gy = G
 
 obstacle = pygame.Rect(screen_width - 300, 0, 60, screen_height)
 player_dummy = pygame.Rect(100, screen_height - 150, 50, 50)
 
-player_dummy_positions = [player_dummy.topleft]
+collided = 0
 while True:
     clock.tick(FPS)
     for event in pygame.event.get():
@@ -31,26 +34,26 @@ while True:
     pygame.draw.rect(screen, (0,0,0), obstacle)
     pygame.draw.rect(screen, (20, 50, 90), player_dummy)
 
-    #Tracking player_dummy positions
-    player_dummy_positions += [player_dummy.topleft]
+    #Move the player
+    player_dummy.x += Gx #The accelerations
+    player_dummy.y -= Gy
 
-    if len(player_dummy_positions) > 1:
-        player_dummy_positions = player_dummy_positions[-2:]
+    #Checking if dummy player has collided
+    if player_dummy.x + player_dummy.width >= obstacle.x:
+        Gx *= -1
+        collided = 1
 
-    player_latest_position = player_dummy_positions[-1]
-    player_2nd_latest_position = player_dummy_positions[-2]
+    if collided:
+        if Gx <= 0 and Gy >= 0:
+            Gx += 0.01
+            Gy -= 0.01
 
-    if player_latest_position[0] + player_dummy.width < obstacle.x:
-        #Moving dummy player
-        player_dummy.x += 2*G
-        player_dummy.y -= G
-    else:
-        new_change = []
-        if player_2nd_latest_position != player_latest_position:
-            new_change += [player_latest_position[0] - player_2nd_latest_position[0]]
-            new_change += [player_latest_position[1] - player_2nd_latest_position[1]]
+        if Gy < 0:
+            Gy = 0
 
-        player_dummy.x -= new_change[0]
-        print(new_change)
+        if Gx > 0:
+            Gx = 0
+
+    print(Gx, Gy)
 
     pygame.display.update()
