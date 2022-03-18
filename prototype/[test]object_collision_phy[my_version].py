@@ -9,7 +9,7 @@ clock = pygame.time.Clock()
 screen_width = 900
 screen_height = 600
 screen = pygame.display.set_mode((screen_width,screen_height))
-pygame.display.set_caption("Character Collision Bounce - Physics")
+pygame.display.set_caption("Character Collision Bounce - Physics [MY WAY]")
 
 # Some important vars
 TITTLE_FONT = pygame.font.SysFont('Cooper Black', 30)
