@@ -1,3 +1,4 @@
+from distutils.spawn import spawn
 import pygame, random, sys
 
 # General setup
@@ -18,14 +19,53 @@ BG = (230, 152, 131)
 BLUE = (5, 23, 61)
 testcase_no = 1
 G = 1 #Is the acceleration
-
 START = False
-
 title = TITTLE_FONT.render("Press 'p' to start the simulation, and 'q' to stop", 1, BLUE)
 
-obstacle = pygame.Rect(screen_width//2, 0, 100, screen_height)
+#Helper Functions
+def randomly_generate_obstacle(screen, width):
+    screen_width = screen.get_width()
+    screen_height = screen.get_height()
+    
+    obstacle = pygame.Rect(0,0,0,0)
+    obstacle.width = random.choice([width, screen_width])
+    obstacle.height = [screen_height, width][obstacle.width == screen_width]
+    obstacle.x = [random.randint(width + 20, screen_width - width - 20),0][obstacle.width == screen_width]
+    obstacle.y = [random.randint(width + 20, screen_height - width - 20),0][obstacle.height == screen_height]
 
-player_dummy = pygame.Rect(100, screen_height - 150, 50, 50)
+    return obstacle
+
+def randomly_generate_player(screen, size):
+    screen_width = screen.get_width()
+    screen_height = screen.get_height()
+
+    player = pygame.Rect(0,0,size,size)
+    player.x = random.randint(10, screen_width - size - 10)
+    player.y = random.randint(10, screen_height - size - 10)
+    
+    return player
+
+def spawn(offset):
+    obstacle = randomly_generate_obstacle(screen, 100)
+    player_dummy = randomly_generate_player(screen, 50)
+
+
+    spawn_offset = player_dummy.width + offset
+    no_player_spawn_zone = pygame.Rect(obstacle.x - spawn_offset//2, obstacle.y - spawn_offset//2, obstacle.width + spawn_offset, obstacle.height + spawn_offset)
+
+    while player_dummy.colliderect(no_player_spawn_zone):
+        player_dummy = randomly_generate_player(screen, 50)
+
+    return obstacle, player_dummy
+
+def generate_target_point(obstacle):
+    target_x = random.randint(obstacle.x, obstacle.x + obstacle.width)
+    target_y = random.randint(obstacle.y, obstacle.y + obstacle.height)
+    target_point = (target_x, target_y)
+
+    return target_point
+
+obstacle, player_dummy = spawn(20)
 
 collided = 0
 reset_counter = 0
@@ -33,10 +73,7 @@ reset_counter = 0
 initial_player_x = player_dummy.x
 initial_player_y = player_dummy.y
 
-target_y = random.randint(obstacle.y + player_dummy.height, obstacle.y + obstacle.height - player_dummy.height)
-target_x = random.randint(obstacle.x + player_dummy.width, obstacle.x + obstacle.width - player_dummy.width)
-
-
+target_x, target_y = generate_target_point(obstacle)
 #Determining the Gx and Gy
 D = ((target_x - obstacle.x)**2 + (target_y - obstacle.y)**2)**0.5 #Euclidean Distance
 Gx = (D**2 - (target_y - obstacle.y)**2)**0.5 #By Pythagoras Theoram
@@ -62,6 +99,9 @@ while True:
             if event.key == pygame.K_p:
                 START = True
 
+            if event.key == pygame.K_w:
+                collided = 1
+
     screen.fill(BG)
 
     if not START:
@@ -71,19 +111,21 @@ while True:
         pygame.draw.rect(screen, (0,0,0), obstacle)
         pygame.draw.rect(screen, (20, 50, 90), player_dummy)
 
+        pygame.draw.rect(screen, (255, 0, 0), pygame.Rect(target_x, target_y, 10, 10))
+
         testcase = TITTLE_FONT.render(f"Case No. {testcase_no}", 1, BLUE)
         screen.blit(testcase, ((screen_width - testcase.get_width() - 30), 10))
 
         #Determine the direction
-        if initial_player_x < obstacle.x//2:
-            player_dummy.x += Gx
-        else:
-            player_dummy.x -= Gx
+        # if initial_player_x < obstacle.x//2:
+        #     player_dummy.x += Gx
+        # else:
+        #     player_dummy.x -= Gx
 
-        if initial_player_y > obstacle.y//2:
-            player_dummy.y -= Gy
-        else:
-            player_dummy.y += Gy
+        # if initial_player_y > obstacle.y//2:
+        #     player_dummy.y -= Gy
+        # else:
+        #     player_dummy.y += Gy
 
         #Checking if dummy player has collided
         if player_dummy.colliderect(obstacle):
@@ -96,31 +138,17 @@ while True:
         if collided == 1:
             reset_counter += 1
 
-        if reset_counter == FPS:
+        if reset_counter == 20:
             collided = 0
             testcase_no += 1
 
             #Randomly generating AND placing the obstacle
-            obstacle.width = random.choice([100, screen_width])
-            obstacle.height = [screen_height, 100][obstacle.width == screen_width]
-            obstacle.x = [random.randint(120, screen_width-120),0][obstacle.width == screen_width]
-            obstacle.y = [random.randint(120, screen_height-120),0][obstacle.height == screen_height]
-
-            #Randomly placing the player
-            player_dummy.x = random.choice([y for y in range(50, obstacle.x - player_dummy.width - 50)] + [x for x in range(obstacle.x + obstacle.width + player_dummy.width + 50)])
-            player_dummy.y = random.choice([x for x in range(50, obstacle.y - player_dummy.height - 50)] + [y for y in range(obstacle.y + obstacle.height + player_dummy.height + 50)])
-
-            while player_dummy.colliderect(obstacle):
-                player_dummy.x = random.choice([y for y in range(50, obstacle.x - player_dummy.width - 50)] + [x for x in range(obstacle.x + obstacle.width + player_dummy.width + 50)])
-                player_dummy.y = random.choice([x for x in range(50, obstacle.y - player_dummy.height - 50)] + [y for y in range(obstacle.y + obstacle.height + player_dummy.height + 50)])
+            obstacle, player_dummy = spawn(20)
 
             initial_player_x = player_dummy.x
             initial_player_y = player_dummy.y
 
-            print(initial_player_x, initial_player_y)
-
-            target_y = random.randint(obstacle.y + player_dummy.height, obstacle.y + obstacle.height - player_dummy.height)
-            target_x = random.randint(obstacle.x + player_dummy.width, obstacle.x + obstacle.width - player_dummy.width)
+            target_x, target_y = generate_target_point(obstacle)
 
             D = ((target_x - obstacle.x)**2 + (target_y - obstacle.y)**2)**0.5 #Euclidean Distance
             Gx = (D**2 - (target_y - obstacle.y)**2)**0.5 #By Pythagoras Theoram
