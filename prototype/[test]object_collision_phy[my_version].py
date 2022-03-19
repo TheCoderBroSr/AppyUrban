@@ -17,14 +17,13 @@ FPS = 120
 BG = (230, 152, 131)
 BLUE = (5, 23, 61)
 testcase_no = 1
-G = 3 #Is the acceleration
+G = 1 #Is the acceleration
 
 START = False
 
 title = TITTLE_FONT.render("Press 'p' to start the simulation, and 'q' to stop", 1, BLUE)
 
-obstacle = pygame.Rect(screen_width//2, 0, 60, screen_height)
-obstacle.x -= obstacle.width//2
+obstacle = pygame.Rect(screen_width//2, 0, 100, screen_height)
 
 player_dummy = pygame.Rect(100, screen_height - 150, 50, 50)
 
@@ -34,8 +33,20 @@ reset_counter = 0
 initial_player_x = player_dummy.x
 initial_player_y = player_dummy.y
 
-target_y = random.randint(obstacle.y, obstacle.y + obstacle.height)
-target_x = random.randint(obstacle.x, obstacle.x + obstacle.width)
+target_y = random.randint(obstacle.y + player_dummy.height, obstacle.y + obstacle.height - player_dummy.height)
+target_x = random.randint(obstacle.x + player_dummy.width, obstacle.x + obstacle.width - player_dummy.width)
+
+
+#Determining the Gx and Gy
+D = ((target_x - obstacle.x)**2 + (target_y - obstacle.y)**2)**0.5 #Euclidean Distance
+Gx = (D**2 - (target_y - obstacle.y)**2)**0.5 #By Pythagoras Theoram
+Gy = (D**2 - Gx**2)**0.5
+
+while Gx > 3:
+    Gx //= 2
+
+while Gy > 3:
+    Gy //= 2
 while True:
     clock.tick(FPS)
     for event in pygame.event.get():
@@ -63,18 +74,6 @@ while True:
         testcase = TITTLE_FONT.render(f"Case No. {testcase_no}", 1, BLUE)
         screen.blit(testcase, ((screen_width - testcase.get_width() - 30), 10))
 
-        #Determining the Gx and Gy
-        # (target_y - obstacle.y)^2 + (Gx)^2 = (D)^2
-        D = ((target_x - obstacle.x)**2 + (target_y - obstacle.y)**2)**0.5 #Euclidean Distance
-        Gx = (D**2 - (target_y - obstacle.y)**2)**0.5 #By Pythagoras Theoram
-        Gy = (D**2 - Gx**2)**0.5
-
-        while Gx > G:
-            Gx //= 2
-
-        while Gy > G:
-            Gy //= 2
-
         #Determine the direction
         if initial_player_x < obstacle.x//2:
             player_dummy.x += Gx
@@ -94,44 +93,44 @@ while True:
                 Gy *= -1
             collided = 1
 
-        print(Gx, Gy)
-
         if collided == 1:
             reset_counter += 1
 
         if reset_counter == FPS:
-            Gx = 2*G
-            Gy = G
             collided = 0
             testcase_no += 1
 
             #Randomly generating AND placing the obstacle
-            obstacle.x = random.randint(20, screen_width - 20)
-            obstacle.y = random.randint(20, screen_height - 20)
-            obstacle.width = random.randint(20, screen_width)
-            obstacle.height = random.randint(20, screen_height)
-
-            while obstacle.x not in range(screen_width) and (obstacle.x + obstacle.width) not in range(screen_width) and obstacle.y not in range(screen_height) and (obstacle.y + obstacle.height) not in range(screen_height):
-                obstacle.x = random.randint(20, screen_width - 20)
-                obstacle.y = random.randint(20, screen_height - 20)
-                obstacle.width = random.randint(20, screen_width)
-                obstacle.height = random.randint(20, screen_height)
+            obstacle.width = random.choice([100, screen_width])
+            obstacle.height = [screen_height, 100][obstacle.width == screen_width]
+            obstacle.x = [random.randint(120, screen_width-120),0][obstacle.width == screen_width]
+            obstacle.y = [random.randint(120, screen_height-120),0][obstacle.height == screen_height]
 
             #Randomly placing the player
-            player_dummy.x = random.randint(10, screen_width - 75)
-            player_dummy.y = random.randint(10, screen_height - 100)
+            player_dummy.x = random.choice([y for y in range(50, obstacle.x - player_dummy.width - 50)] + [x for x in range(obstacle.x + obstacle.width + player_dummy.width + 50)])
+            player_dummy.y = random.choice([x for x in range(50, obstacle.y - player_dummy.height - 50)] + [y for y in range(obstacle.y + obstacle.height + player_dummy.height + 50)])
 
-            #Checking for dead zones
             while player_dummy.colliderect(obstacle):
-                player_dummy.x = random.randint(10, screen_width - 75)
-                player_dummy.y = random.randint(10, screen_height - 100)
+                player_dummy.x = random.choice([y for y in range(50, obstacle.x - player_dummy.width - 50)] + [x for x in range(obstacle.x + obstacle.width + player_dummy.width + 50)])
+                player_dummy.y = random.choice([x for x in range(50, obstacle.y - player_dummy.height - 50)] + [y for y in range(obstacle.y + obstacle.height + player_dummy.height + 50)])
 
             initial_player_x = player_dummy.x
             initial_player_y = player_dummy.y
 
+            print(initial_player_x, initial_player_y)
+
+            target_y = random.randint(obstacle.y + player_dummy.height, obstacle.y + obstacle.height - player_dummy.height)
+            target_x = random.randint(obstacle.x + player_dummy.width, obstacle.x + obstacle.width - player_dummy.width)
+
             D = ((target_x - obstacle.x)**2 + (target_y - obstacle.y)**2)**0.5 #Euclidean Distance
             Gx = (D**2 - (target_y - obstacle.y)**2)**0.5 #By Pythagoras Theoram
             Gy = (D**2 - Gx**2)**0.5
+
+            while Gx > 4:
+                Gx //= 2
+
+            while Gy > 4:
+                Gy //= 2
 
             #Resetting the vars
             collided = 0
