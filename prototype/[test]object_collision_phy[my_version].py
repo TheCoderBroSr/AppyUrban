@@ -66,13 +66,15 @@ def generate_target_point(obstacle):
     return target_point
 
 def determine_speed(player, obstacle, target_point, time=40):
+    target_point_x, target_point_y = target_point
+
     #Euclidean Distance
-    distance_obs_to_target = ((target_point.x - obstacle.x)**2 + (target_point.y - obstacle.y)**2)**0.5
-    slant_distance = ((player.x - target_point.x)**2 + (player.y - target_point.y)**2)**0.5
+    distance_obs_to_target = ((target_point_x - obstacle.x)**2 + (target_point_y - obstacle.y)**2)**0.5
+    slant_distance = ((player.x - target_point_x)**2 + (player.y - target_point_y)**2)**0.5
 
     #Using pythagoras theoram
-    Dx = (slant_distance**2 - distance_obs_to_target**2)**0.5 #horizontal distance
-    Dy = (slant_distance**2 - Dx**2)**0.5 #vertical distance
+    Dx = (abs((slant_distance)**2 - (distance_obs_to_target)**2))**0.5 #horizontal distance
+    Dy = (abs((slant_distance)**2 - (Dx)**2))**0.5 #vertical distance
 
     #speeds
     Vx = Dx/time
@@ -126,6 +128,7 @@ while True:
         pygame.draw.line(screen, (134,56,105), (player_dummy.x, player_dummy.y), (target_x, target_y), width=2)
 
 
+        #Displaying Testcase No.
         testcase = TITTLE_FONT.render(f"Case No. {testcase_no}", 1, BLUE)
         screen.blit(testcase, ((screen_width - testcase.get_width() - 30), 10))
 
@@ -161,15 +164,8 @@ while True:
             initial_player_x, initial_player_y = player_dummy.topleft
             target_x, target_y = generate_target_point(obstacle)
 
-            D = ((target_x - obstacle.x)**2 + (target_y - obstacle.y)**2)**0.5 #Euclidean Distance
-            Gx = (D**2 - (target_y - obstacle.y)**2)**0.5 #By Pythagoras Theoram
-            Gy = (D**2 - Gx**2)**0.5
-
-            while Gx > 4:
-                Gx //= 2
-
-            while Gy > 4:
-                Gy //= 2
+            #Determining the Gx and Gy
+            Gx, Gy = determine_speed(player_dummy, obstacle, (target_x, target_y))
 
             #Resetting the vars
             collided = 0
