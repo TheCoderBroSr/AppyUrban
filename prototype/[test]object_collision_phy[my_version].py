@@ -1,5 +1,5 @@
 from distutils.spawn import spawn
-import pygame, random, sys
+import pygame, random, sys, math
 
 # General setup
 pygame.init()
@@ -65,7 +65,7 @@ def generate_target_point(obstacle):
 
     return target_point
 
-def determine_speed(player, obstacle, target_point, time=40):
+def determine_speed(player, obstacle, target_point, time=240):
     target_point_x, target_point_y = target_point
 
     #Euclidean Distance
@@ -73,14 +73,14 @@ def determine_speed(player, obstacle, target_point, time=40):
     slant_distance = ((player.x - target_point_x)**2 + (player.y - target_point_y)**2)**0.5
 
     #Using pythagoras theoram
-    Dx = (abs((slant_distance)**2 - (distance_obs_to_target)**2))**0.5 #horizontal distance
-    Dy = (abs((slant_distance)**2 - (Dx)**2))**0.5 #vertical distance
+    Dy = distance_obs_to_target #vertical distance
+    Dx = (abs((slant_distance)**2 - (Dy)**2))**0.5 #horizontal distance
 
     #speeds
     Vx = Dx/time
     Vy = Dy/time
 
-    return (Vx, Vy)
+    return (math.ceil(Vx), math.ceil(Vy))
 
 obstacle, player_dummy = spawn(20)
 
@@ -127,18 +127,19 @@ while True:
         #The Path
         pygame.draw.line(screen, (134,56,105), (player_dummy.x, player_dummy.y), (target_x, target_y), width=2)
 
-
         #Displaying Testcase No.
         testcase = TITTLE_FONT.render(f"Case No. {testcase_no}", 1, BLUE)
         screen.blit(testcase, ((screen_width - testcase.get_width() - 30), 10))
 
-        #Determine the direction
-        if initial_player_x < obstacle.x//2:
+        print(Gx, Gy)
+
+        #Determine the direction, and moving the player
+        if initial_player_x < target_x:
             player_dummy.x += Gx
         else:
             player_dummy.x -= Gx
 
-        if initial_player_y > obstacle.y//2:
+        if initial_player_y > target_y:
             player_dummy.y -= Gy
         else:
             player_dummy.y += Gy
