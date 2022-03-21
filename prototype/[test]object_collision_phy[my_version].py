@@ -1,5 +1,5 @@
 from distutils.spawn import spawn
-import pygame, random, sys, math
+import pygame, random, sys
 
 # General setup
 pygame.init()
@@ -59,39 +59,52 @@ def spawn(offset):
     return obstacle, player_dummy
 
 def generate_target_point(obstacle):
-    target_x = random.randint(obstacle.x, obstacle.x + obstacle.width)
-    target_y = random.randint(obstacle.y, obstacle.y + obstacle.height)
+    target_x = random.randint(obstacle.x + 50, obstacle.x + obstacle.width - 50)
+    target_y = random.randint(obstacle.y + 50, obstacle.y + obstacle.height - 50)
     target_point = (target_x, target_y)
 
     return target_point
 
-def determine_speed(player, obstacle, target_point, time=240):
+def determine_speed(player, target_point, time=120):
     target_point_x, target_point_y = target_point
 
     #Euclidean Distance
-    distance_obs_to_target = ((target_point_x - obstacle.x)**2 + (target_point_y - obstacle.y)**2)**0.5
     slant_distance = ((player.x - target_point_x)**2 + (player.y - target_point_y)**2)**0.5
 
-    #Using pythagoras theoram
-    Dy = distance_obs_to_target #vertical distance
-    Dx = (abs((slant_distance)**2 - (Dy)**2))**0.5 #horizontal distance
-
+    #Using trignometry
+    Dx = target_point_x - player.x
+    Dy = target_point_y - player.y
+ 
     #speeds
-    Vx = Dx/time
-    Vy = Dy/time
+    Vx = round(Dx/time)
+    Vy = round(Dy/time)
 
-    return (math.ceil(Vx), math.ceil(Vy))
+    if Vx == 0:
+        Vx = 1
 
-obstacle, player_dummy = spawn(20)
+    if Vy == 0:
+        Vy = 1
 
-collided = 0
-reset_counter = 0
+    return (Vx, Vy)
 
-initial_player_x, initial_player_y = player_dummy.topleft
-target_x, target_y = generate_target_point(obstacle)
+def init():
+    obstacle, player_dummy = spawn(20)
 
-#Determining the Gx and Gy
-Gx, Gy = determine_speed(player_dummy, obstacle, (target_x, target_y))
+    collided = 0
+    reset_counter = 0
+
+    initial_player_x, initial_player_y = (player_dummy.x + (player_dummy.width//2), player_dummy.y + (player_dummy.height//2))
+    target_x, target_y = generate_target_point(obstacle)
+
+    #Determining the Gx and Gy
+    Gx, Gy = determine_speed(player_dummy, (target_x, target_y))
+
+    x_collided = 1
+    y_collided = 1
+
+    return (obstacle, player_dummy, collided, reset_counter, target_x, target_y, Gx, Gy, x_collided, y_collided)
+
+obstacle, player_dummy, collided, reset_counter, target_x, target_y, Gx, Gy, x_collided, y_collided = init()
 
 while True:
     clock.tick(FPS)
@@ -125,7 +138,7 @@ while True:
         pygame.draw.circle(screen, (255, 0, 0), (target_x, target_y), 5, 2)
 
         #The Path
-        pygame.draw.line(screen, (134,56,105), (player_dummy.x, player_dummy.y), (target_x, target_y), width=2)
+        pygame.draw.line(screen, (134,56,105), (player_dummy.x + (player_dummy.width//2), player_dummy.y + (player_dummy.height//2)), (target_x, target_y), width=2)
 
         #Displaying Testcase No.
         testcase = TITTLE_FONT.render(f"Case No. {testcase_no}", 1, BLUE)
@@ -133,44 +146,24 @@ while True:
 
         print(Gx, Gy)
 
-        #Determine the direction, and moving the player
-        if initial_player_x < target_x:
-            player_dummy.x += Gx
-        else:
-            player_dummy.x -= Gx
-
-        if initial_player_y > target_y:
-            player_dummy.y -= Gy
-        else:
-            player_dummy.y += Gy
+        #Moving the player
+        player_dummy.x += Gx * x_collided
+        player_dummy.y += Gy * y_collided
 
         #Checking if dummy player has collided
         if player_dummy.colliderect(obstacle):
             if obstacle.height > obstacle.width: #Checking if obstacle is vertical
-                Gx *= -1
+                x_collided = -1
             else:
-                Gy *= -1
+                y_collided = -1
             collided = 1
 
         if collided == 1:
             reset_counter += 1
 
         if reset_counter == FPS:
-            collided = 0
             testcase_no += 1
-
-            #Randomly generating AND placing the obstacle
-            obstacle, player_dummy = spawn(20)
-
-            initial_player_x, initial_player_y = player_dummy.topleft
-            target_x, target_y = generate_target_point(obstacle)
-
-            #Determining the Gx and Gy
-            Gx, Gy = determine_speed(player_dummy, obstacle, (target_x, target_y))
-
-            #Resetting the vars
-            collided = 0
-            reset_counter = 0
+            obstacle, player_dummy, collided, reset_counter, target_x, target_y, Gx, Gy, x_collided, y_collided = init()
 
             pygame.time.delay(1000)
 
