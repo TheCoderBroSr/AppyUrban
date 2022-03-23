@@ -21,7 +21,7 @@ testcase_no = 1
 G = 1 #Is the acceleration
 START = False
 title = TITTLE_FONT.render("Press 'p' to start the simulation, and 'q' to stop", 1, BLUE)
-
+path_color = (134,56,105)
 #Helper Functions
 def randomly_generate_obstacle(screen, width):
     screen_width = screen.get_width()
@@ -121,9 +121,6 @@ while True:
             if event.key == pygame.K_p:
                 START = True
 
-            if event.key == pygame.K_w:
-                collided = 1
-
     screen.fill(BG)
 
     if not START:
@@ -138,7 +135,7 @@ while True:
         pygame.draw.circle(screen, (255, 0, 0), (target_x, target_y), 5, 2)
 
         #The Path
-        pygame.draw.line(screen, (134,56,105), (player_dummy.x + (player_dummy.width//2), player_dummy.y + (player_dummy.height//2)), (target_x, target_y), width=2)
+        pygame.draw.line(screen, path_color, (player_dummy.x + (player_dummy.width//2), player_dummy.y + (player_dummy.height//2)), (target_x, target_y), width=2)
 
         #Displaying Testcase No.
         testcase = TITTLE_FONT.render(f"Case No. {testcase_no}", 1, BLUE)
@@ -160,10 +157,12 @@ while True:
 
         if collided == 1:
             reset_counter += 1
+            path_color = (234,26,25)
 
         if reset_counter == FPS:
             testcase_no += 1
             obstacle, player_dummy, collided, reset_counter, target_x, target_y, Gx, Gy, x_collided, y_collided = init()
+            path_color = (134,56,105)
 
             pygame.time.delay(1000)
 
