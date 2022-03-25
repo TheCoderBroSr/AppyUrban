@@ -34,6 +34,14 @@ class Player(pygame.sprite.Sprite):
 		if keys_pressed[pygame.K_SPACE] and self.rect.y > 0: #Checking if space bar is pressed and adding contraints
 			self.can_move = True
 
+	def x_collision(self, obj):
+		obj_x_range = range(obj.x, obj.x + obj.width)
+		return (self.x in obj_x_range) or (self.x + self.rect.width)
+
+	def y_collision(self, obj):
+		obj_y_range = range(obj.y, obj.y + obj.height)
+		return (self.y in obj_y_range) or (self.y + self.rect.height)
+
 	def collision_det(self, obj, precision=0):
 		x_range = range(obj.x + precision, obj.x + obj.width - precision)
 		y_range = range(obj.y + precision, obj.y + obj.height - precision)
