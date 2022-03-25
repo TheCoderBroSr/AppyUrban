@@ -1,5 +1,6 @@
 from distutils.spawn import spawn
 import pygame, random, sys
+from character_obj import Player
 
 # General setup
 pygame.init()
@@ -22,6 +23,7 @@ G = 1 #Is the acceleration
 START = False
 title = TITTLE_FONT.render("Press 'p' to start the simulation, and 'q' to stop", 1, BLUE)
 path_color = (134,56,105)
+
 #Helper Functions
 def randomly_generate_obstacle(screen, width):
     screen_width = screen.get_width()
@@ -39,24 +41,26 @@ def randomly_generate_player(screen, size):
     screen_width = screen.get_width()
     screen_height = screen.get_height()
 
-    player = pygame.Rect(0,0,size,size)
-    player.x = random.randint(10, screen_width - size - 10)
-    player.y = random.randint(10, screen_height - size - 10)
-    
+    player_x = random.randint(10, screen_width - size - 10)
+    player_y = random.randint(10, screen_height - size - 10)
+    player_position = (player_x, player_y)
+
+    player = Player(player_position, screen, 0)
+
     return player
 
 def spawn(offset):
     obstacle = randomly_generate_obstacle(screen, 100)
-    player_dummy = randomly_generate_player(screen, 50)
+    player = randomly_generate_player(screen, 50)
 
 
-    spawn_offset = player_dummy.width + offset
+    spawn_offset = player.rect.width + offset
     no_player_spawn_zone = pygame.Rect(obstacle.x - spawn_offset//2, obstacle.y - spawn_offset//2, obstacle.width + spawn_offset, obstacle.height + spawn_offset)
 
-    while player_dummy.colliderect(no_player_spawn_zone):
-        player_dummy = randomly_generate_player(screen, 50)
+    while player.rect.colliderect(no_player_spawn_zone):
+        player = randomly_generate_player(screen, 50)
 
-    return obstacle, player_dummy
+    return obstacle, player
 
 def generate_target_point(obstacle):
     target_x = random.randint(obstacle.x + 50, obstacle.x + obstacle.width - 50)
@@ -88,23 +92,22 @@ def determine_speed(player, target_point, time=120):
     return (Vx, Vy)
 
 def init():
-    obstacle, player_dummy = spawn(20)
+    obstacle, player = spawn(20)
 
     collided = 0
     reset_counter = 0
 
-    initial_player_x, initial_player_y = (player_dummy.x + (player_dummy.width//2), player_dummy.y + (player_dummy.height//2))
     target_x, target_y = generate_target_point(obstacle)
 
     #Determining the Gx and Gy
-    Gx, Gy = determine_speed(player_dummy, (target_x, target_y))
+    Gx, Gy = determine_speed(player, (target_x, target_y))
 
     x_collided = 1
     y_collided = 1
 
-    return (obstacle, player_dummy, collided, reset_counter, target_x, target_y, Gx, Gy, x_collided, y_collided)
+    return (obstacle, player, collided, reset_counter, target_x, target_y, Gx, Gy, x_collided, y_collided)
 
-obstacle, player_dummy, collided, reset_counter, target_x, target_y, Gx, Gy, x_collided, y_collided = init()
+obstacle, player, collided, reset_counter, target_x, target_y, Gx, Gy, x_collided, y_collided = init()
 
 while True:
     clock.tick(FPS)
@@ -129,13 +132,15 @@ while True:
     if START:
         #Drawing the obstacle and player
         pygame.draw.rect(screen, (0,0,0), obstacle)
-        pygame.draw.rect(screen, (20, 50, 90), player_dummy)
+        screen.blit(player.image, (player.x, player.y))
+        player.update()
+        # pygame.draw.rect(screen, (20, 50, 90), player.rect)
 
         #Target for the player
         pygame.draw.circle(screen, (255, 0, 0), (target_x, target_y), 5, 2)
 
         #The Path
-        pygame.draw.line(screen, path_color, (player_dummy.x + (player_dummy.width//2), player_dummy.y + (player_dummy.height//2)), (target_x, target_y), width=2)
+        pygame.draw.line(screen, path_color, (player.x + (player.rect.width//2), player.y + (player.rect.height//2)), (target_x, target_y), width=2)
 
         #Displaying Testcase No.
         testcase = TITTLE_FONT.render(f"Case No. {testcase_no}", 1, BLUE)
@@ -144,11 +149,11 @@ while True:
         print(Gx, Gy)
 
         #Moving the player
-        player_dummy.x += Gx * x_collided
-        player_dummy.y += Gy * y_collided
+        player.rect.x += Gx * x_collided
+        player.rect.y += Gy * y_collided
 
         #Checking if dummy player has collided
-        if player_dummy.colliderect(obstacle):
+        if player.rect.colliderect(obstacle):
             if obstacle.height > obstacle.width: #Checking if obstacle is vertical
                 x_collided = -1
             else:
@@ -161,7 +166,7 @@ while True:
 
         if reset_counter == FPS:
             testcase_no += 1
-            obstacle, player_dummy, collided, reset_counter, target_x, target_y, Gx, Gy, x_collided, y_collided = init()
+            obstacle, player, collided, reset_counter, target_x, target_y, Gx, Gy, x_collided, y_collided = init()
             path_color = (134,56,105)
 
             pygame.time.delay(1000)
