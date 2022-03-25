@@ -154,10 +154,12 @@ while True:
 
         #Checking if dummy player has collided
         if player.rect.colliderect(obstacle):
-            if obstacle.height > obstacle.width: #Checking if obstacle is vertical
+            if player.exact_x_collision(obstacle, 2): #Checking if obstacle is vertical
                 x_collided = -1
-            else:
+            
+            if player.exact_y_collision(obstacle, 2):
                 y_collided = -1
+
             collided = 1
 
         if collided == 1:
