@@ -73,21 +73,17 @@ while True:
                 npz1, npz2 = obstacle.non_passable_zones()
 
                 #Checking if the player is colliding with these zones
-                # x1_collide, y1_collide, x1_range_rect, y1_range_rect = player.collision_det(npz1, 20)
-                # x2_collide, y2_collide, x2_range_rect, y2_range_rect = player.collision_det(npz2, 20)
-
-                x1_collide, y1_collide = player.collision_det(npz1, 20)
-                x2_collide, y2_collide = player.collision_det(npz2, 20)
+                player_collide_npz1 = player.collision_det(npz1, 30)
+                player_collide_npz2 = player.collision_det(npz2, 30)
 
                 #Testing
-                # pygame.draw.rect(screen, (255,0,0), x1_range_rect)
-                # pygame.draw.rect(screen, (255,0,0), y1_range_rect)
-                # pygame.draw.rect(screen, (0,255,0), x2_range_rect)
-                # pygame.draw.rect(screen, (0,255,0), y2_range_rect)
-
-                if ((x1_collide and y1_collide) or (x2_collide and y2_collide)) and (not player.respawn_animation):
+                if (player_collide_npz1 or player_collide_npz2) and (not player.respawn_animation):
                     obstacle.can_collide = False
                     player.respawn()
+                    FPS //= 2
+
+                if (not player.respawn_animation):
+                    FPS = 120
 
                 #If the obstacle has passed the player, then it can't collide with the player
                 if obstacle.x + obstacle.width < player.x:

@@ -41,18 +41,15 @@ class Player(pygame.sprite.Sprite):
 		return (abs(self.y - obj.y) <= precision_offset) or (abs(self.y + self.rect.height - obj.y - obj.height) <= precision_offset)
 
 	def collision_det(self, obj, precision_offset=0):
-		x_range = range(obj.x + precision_offset, obj.x + obj.width - precision_offset)
-		y_range = range(obj.y + precision_offset, obj.y + obj.height - precision_offset)
+		new_obj = obj.copy()
 
-		#testing
-		# x_range_rect = pygame.Rect(obj.x + precision_offset, obj.x + obj.width - precision_offset, 10, 10)
-		# y_range_rect = pygame.Rect(obj.y + precision_offset, obj.y + obj.width - precision_offset, 10, 10)
-		
-		horizontal_collision = (self.x in x_range) or (self.x + self.rect.width in x_range)
-		vertical_collision = (self.y in y_range) or (self.y + self.rect.height in y_range)
+		new_obj.x += precision_offset
+		new_obj.y += precision_offset
 
-		# return (horizontal_collision, vertical_collision, x_range_rect, y_range_rect)
-		return (horizontal_collision, vertical_collision)
+		new_obj.width -= 2*precision_offset
+		new_obj.height -= 2*precision_offset
+
+		return self.rect.colliderect(new_obj)
 
 	def update(self, speed=0.0275):
 		#Changing x, y values to be the same as the player's rect values
