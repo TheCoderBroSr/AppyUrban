@@ -84,7 +84,6 @@ while True:
 
                 if (not player.respawn_animation):
                     FPS = 120
-
                 #If the obstacle has passed the player, then it can't collide with the player
                 if obstacle.x + obstacle.width < player.x:
                     obstacle.can_collide = False
