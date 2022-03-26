@@ -1,4 +1,4 @@
-import pygame, sys
+import pygame, sys, time
 from character_obj import Player
 from obstacle_obj import Obstacle, obstacle_generation
 
@@ -37,6 +37,8 @@ obstacle = Obstacle((screen_width, 0), screen, space_color = BG, border_color = 
 #Adding them to their respective sprite group
 moving_sprites.add(player)
 collision_sprites.add(obstacle)
+
+last_time = 0
 while True:
     clock.tick(FPS)
     for event in pygame.event.get():
@@ -80,10 +82,17 @@ while True:
                 if (player_collide_npz1 or player_collide_npz2) and (not player.respawn_animation):
                     obstacle.can_collide = False
                     player.respawn()
-                    FPS //= 2
 
-                if (not player.respawn_animation):
-                    FPS = 120
+                    #Keeping track of the time
+                    last_time = time.time()
+                    FPS = 60 #Slowing down the game
+
+                if last_time:
+                    #Speeding up the game to become normal speed
+                    if abs(time.time() - last_time) > 1.6:
+                        FPS = 120
+                        last_time = 0
+
                 #If the obstacle has passed the player, then it can't collide with the player
                 if obstacle.x + obstacle.width < player.x:
                     obstacle.can_collide = False
