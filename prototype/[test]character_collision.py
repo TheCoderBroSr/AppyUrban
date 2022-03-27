@@ -58,14 +58,12 @@ while True:
         sample_collision_obj2.x = 0
 
     #Checking for collision
-    x1_collide, y1_collide = player.collision_det(sample_collision_obj1)
-    if x1_collide and y1_collide:
+    if player.collision_det(sample_collision_obj1):
         obj_color1 = (255,0,0)
     else:
         obj_color1 = (20,60,30)
 
-    x2_collide, y2_collide = player.collision_det(sample_collision_obj2)
-    if x2_collide and y2_collide:
+    if player.collision_det(sample_collision_obj2):
         obj_color2 = (255,0,0)
     else:
         obj_color2 = (20,50,60)
